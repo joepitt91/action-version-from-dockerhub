@@ -1,0 +1,85 @@
+# SPDX-FileCopyrightText: 2025 Joe Pitt
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
+---
+name: Get Latest Version from DockerHub Image Tags
+author: Joe Pitt
+description: Get the latest semantic version number from a Docker Hub repository's tagged images
+inputs:
+  dockerhub_username:
+    description: DockerHub username
+    required: true
+  dockerhub_token:
+    description: Personal Access Token with read access to target repository
+    required: true
+  repository:
+    description: The repository to look within
+    required: true
+  namespace:
+    description: The namespace containing the repository
+    required: false
+    default: library
+  minimum_version:
+    description: The minimum version number to accept e.g. 2.0.0
+    required: false
+  maximum_version:
+    description: The maximum version number to accept e.g. 2.99.99
+    required: false
+outputs:
+  version:
+    description: 'The latest semantic version found'
+    value: ${{ steps.get_version.outputs.version }}
+runs:
+  using: composite
+  steps:
+  - name: Install Get Latest Version & Semantic Versioning
+    id: dependencies
+    run: pip install --upgrade -r ${{ github.action_path }}/requirements.txt
+    shell: bash
+  - name: Get Latest Version
+    id: get_version
+    env:
+      GITHUB_ACTION_PATH: ${{ github.action_path }}
+      INPUT_dockerhub_token: ${{ inputs.dockerhub_token }}
+      INPUT_dockerhub_username: ${{ inputs.dockerhub_username }}
+      INPUT_maximum_version: ${{ inputs.minimum_version }}
+      INPUT_minimum_version: ${{ inputs.minimum_version }}
+      INPUT_namespace: ${{ inputs.namespace }}
+      INPUT_repository: ${{ inputs.repository }}
+    shell: python
+    run: |
+      from os import getenv
+
+      from semver import Version
+
+      from get_latest_version.dockerhub import get_latest_image_version
+
+
+      minimum_version = None
+      if getenv("INPUT_minimum_version") is not None:
+          minimum_version = Version.parse(getenv("INPUT_minimum_version"))
+
+      maximum_version = None
+      if getenv("INPUT_maximum_version") is not None:
+          maximum_version = Version.parse(getenv("INPUT_maximum_version"))
+
+
+      version = get_latest_image_version(
+          username=getenv("INPUT_dockerhub_username"),
+          token=getenv("INPUT_dockerhub_token"),
+          namespace=getenv("INPUT_namespace"),
+          repository=getenv("INPUT_repository"),
+          minimum_version=minimum_version,
+          maximum_version=maximum_version,
+      )
+
+      if getenv("GITHUB_OUTPUT") is None:
+          raise ValueError("Cannot locate GITHUB_OUTPUT file")
+
+      output_file: str = getenv("GITHUB_OUTPUT")
+      with open(output_file, "a", encoding="utf-8") as f:
+          f.write(f"version={version}\n")
+branding:
+  color: blue
+  icon: disc
