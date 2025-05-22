@@ -57,11 +57,11 @@ runs:
 
 
       minimum_version = None
-      if getenv("INPUT_minimum_version") is not None:
+      if getenv("INPUT_minimum_version") is not None and len(getenv("INPUT_minimum_version")) >= 5:
           minimum_version = Version.parse(getenv("INPUT_minimum_version"))
 
       maximum_version = None
-      if getenv("INPUT_maximum_version") is not None:
+      if getenv("INPUT_maximum_version") is not None and len(getenv("INPUT_maximum_version")) >= 5:
           maximum_version = Version.parse(getenv("INPUT_maximum_version"))
 
 
