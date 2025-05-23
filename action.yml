@@ -5,35 +5,35 @@
 ---
 name: Get Latest Version from DockerHub Image Tags
 author: Joe Pitt
-description: Get the latest semantic version number from a Docker Hub repository's tagged images
+description: Get the latest semantic version number from a Docker Hub repository's tagged images.
 inputs:
   dockerhub_username:
-    description: DockerHub username
+    description: The user to authenticate to the Docker Hub API as.
     required: true
   dockerhub_token:
-    description: Personal Access Token with read access to target repository
-    required: true
-  repository:
-    description: The repository to look within
+    description: The token to authenticate to the Docker Hub API with (must have read access).
     required: true
   namespace:
-    description: The namespace containing the repository
+    description: The namespace the repository is in. Defaults to "library".
     required: false
     default: library
+  repository:
+    description: The repository to search tags for.
+    required: true
   minimum_version:
-    description: The minimum version number to accept e.g. 2.0.0
+    description: The minimum version number to accept, e.g. 2.0.0. Defaults to None.
     required: false
   maximum_version:
-    description: The maximum version number to accept e.g. 2.99.99
+    description: The maximum version number to accept, e.g. 2.99.99. Defaults to None.
     required: false
 outputs:
   version:
-    description: 'The latest semantic version found'
+    description: The latest version number.
     value: ${{ steps.get_version.outputs.version }}
 runs:
   using: composite
   steps:
-  - name: Install Get Latest Version & Semantic Versioning
+  - name: Install Dependencies
     id: dependencies
     run: pip install --upgrade -r ${{ github.action_path }}/requirements.txt
     shell: bash
