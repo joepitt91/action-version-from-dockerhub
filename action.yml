@@ -27,6 +27,9 @@ inputs:
     description: The maximum version number to accept, e.g. 2.99.99. Defaults to None.
     required: false
 outputs:
+  tag:
+    description: The image tag for the latest version.
+    value: ${{ steps.get_version.outputs.tag }}
   version:
     description: The latest version number.
     value: ${{ steps.get_version.outputs.version }}
@@ -50,22 +53,18 @@ runs:
     shell: python
     run: |
       from os import getenv
-
-      from semver import Version
-
       from get_latest_version.dockerhub import get_latest_image_version
-
+      from get_latest_version.functions import clean_version
+      from semver import Version
 
       minimum_version = None
       if getenv("INPUT_minimum_version") is not None and len(getenv("INPUT_minimum_version")) >= 5:
           minimum_version = Version.parse(getenv("INPUT_minimum_version"))
-
       maximum_version = None
       if getenv("INPUT_maximum_version") is not None and len(getenv("INPUT_maximum_version")) >= 5:
           maximum_version = Version.parse(getenv("INPUT_maximum_version"))
 
-
-      version = get_latest_image_version(
+      tag = get_latest_image_version(
           username=getenv("INPUT_dockerhub_username"),
           token=getenv("INPUT_dockerhub_token"),
           namespace=getenv("INPUT_namespace"),
@@ -74,12 +73,9 @@ runs:
           maximum_version=maximum_version,
       )
 
-      if getenv("GITHUB_OUTPUT") is None:
-          raise ValueError("Cannot locate GITHUB_OUTPUT file")
-
-      output_file: str = getenv("GITHUB_OUTPUT")
-      with open(output_file, "a", encoding="utf-8") as f:
-          f.write(f"version={version}\n")
+      with open(getenv("GITHUB_OUTPUT"), "a", encoding="utf-8") as f:
+          f.write(f"tag={tag}\n")
+          f.write(f"version={Version(clean_version(tag))}\n")
 branding:
   color: blue
   icon: disc

@@ -20,4 +20,7 @@ Get the latest semantic version number from a Docker Hub repository's tagged ima
 
 ## Outputs
 
-`version` containing the image tag representing the latest version.
+| Output | Description | Example |
+|--------|-------------|---------|
+| tag | The image tag for the latest version. | v2.5.3 |
+| version | The latest version number. | 2.5.3 |
