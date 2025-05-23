@@ -24,3 +24,15 @@ Get the latest semantic version number from a Docker Hub repository's tagged ima
 |--------|-------------|---------|
 | tag | The image tag for the latest version. | v2.5.3 |
 | version | The latest version number. | 2.5.3 |
+
+## Example
+
+```yaml
+      - name: Get Latest Nextcloud Version
+        id: version
+        uses: joepitt91/action-version-from-dockerhub@v1
+        with:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: nextcloud
+```
