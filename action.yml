@@ -76,6 +76,11 @@ runs:
       with open(getenv("GITHUB_OUTPUT"), "a", encoding="utf-8") as f:
           f.write(f"tag={tag}\n")
           f.write(f"version={Version(clean_version(tag))}\n")
+  - name: Print Version
+    id: print
+    run: |
+      echo "Latest version ${{ steps.get_version.outputs.version }} tagged as docker.io/${{ inputs.namespace }}/${{ inputs.repository }}:${{ steps.get_version.outputs.tag }}"
+    shell: bash
 branding:
   color: blue
   icon: disc
