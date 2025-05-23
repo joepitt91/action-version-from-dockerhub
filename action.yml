@@ -75,7 +75,7 @@ runs:
 
       with open(getenv("GITHUB_OUTPUT"), "a", encoding="utf-8") as f:
           f.write(f"tag={tag}\n")
-          f.write(f"version={Version(clean_version(tag))}\n")
+          f.write(f"version={Version.parse(clean_version(tag))}\n")
   - name: Print Version
     id: print
     run: |
