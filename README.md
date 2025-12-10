@@ -30,7 +30,7 @@ Get the latest semantic version number from a Docker Hub repository's tagged ima
 ```yaml
       - name: Get Latest Nextcloud Version
         id: version
-        uses: joepitt91/action-version-from-dockerhub@v1
+        uses: joepitt91/action-version-from-dockerhub@v2
         with:
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
